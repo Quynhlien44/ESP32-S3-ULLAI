@@ -1,0 +1,38 @@
+class InferenceEngine {
+public:
+    InferenceEngine() {
+        // Khởi tạo nano model (Level 0)
+        nano_model = tflite::GetModel(nano_model_tflite);
+        
+        // Khởi tạo mini model (Level 1)
+        // ...
+    }
+
+    std::vector<float> predict(const std::vector<float>& input) {
+        // Level 0: Nano model
+        auto nano_result = run_nano_model(input);
+        
+        if (confidence(nano_result) > 0.9f) {
+            return nano_result;
+        }
+        
+        // Level 1: Mini model
+        auto mini_result = run_mini_model(input);
+        
+        if (requires_cloud(mini_result)) {
+            // Level 2: Cloud (gửi dữ liệu qua WiFi)
+            return send_to_cloud(input);
+        }
+        
+        return mini_result;
+    }
+
+private:
+    float confidence(const std::vector<float>& output) {
+        // Tính độ tin cậy của kết quả
+        auto max_val = *std::max_element(output.begin(), output.end());
+        return max_val;
+    }
+    
+    // ... Các hàm triển khai chi tiết
+};
